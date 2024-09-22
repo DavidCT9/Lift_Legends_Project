@@ -14,8 +14,8 @@ app.use(bodyParser.json());
 //Configuration to Use mongoDB
 const mongoUser = process.env.DB_USER;
 const mongoPassword = process.env.DB_PASS;
-let mongoUrl = `mongodb+srv://${mongoUser}:${mongoPassword}@cluster0.mongodb.net/liftLegends?retryWrites=true&w=majority`;
-mongoUrl = `mongodb://${mongoUser}:${mongoPassword}@cluster0.mongodb.net/liftLegends`;
+const mongoUrl = `mongodb+srv://${mongoUser}:${mongoPassword}@cluster0.6iz2suz.mongodb.net/post?retryWrites=true&w=majority`;
+//mongoUrl = `mongodb://${mongoUser}:${mongoPassword}@cluster0.mongodb.net/liftLegends`;
 
 console.log(mongoUrl);
 // Connect to MongoDB
