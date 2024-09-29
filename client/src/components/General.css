@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+    @apply m-0 p-0 min-h-screen w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500;
+}
+
+.form-container {
+    @apply flex items-center justify-center min-h-screen;
+}
+
+.form-box {
+    @apply w-full max-w-md sm:max-w-sm md:max-w-md lg:max-w-lg p-8 space-y-6 bg-white rounded-lg shadow-md;
+}
+
+.form-title {
+    @apply text-2xl font-bold text-center;
+}
+
+.form-input {
+    @apply w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500;
+}
+
+.form-button {
+    @apply w-full px-4 py-2 font-bold text-white bg-indigo-500 rounded-md hover:bg-indigo-600 transition;
+}
+
+.form-link {
+    @apply text-sm text-center text-gray-600;
+}
+
+.form-link a {
+    @apply text-indigo-500 hover:underline;
+}
