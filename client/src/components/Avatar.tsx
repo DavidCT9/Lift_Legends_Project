@@ -8,36 +8,46 @@ import { Group } from 'three';
 import { useFrame } from '@react-three/fiber';
 import { useControls } from 'leva';
 import * as THREE from 'three';
+import Tsk from '../components/characters/Tsk'
+import Wendy from '../components/characters/Wendy'
+
 
 
 interface AvatarProps {
   animation: string;
+  characterName: string;
 }
+
+let characterName = '';
 
 export default function Avatar(props: AvatarProps) {
   const { animation } = props;
+  characterName = props.characterName;
+
+  let avatarComponents = null;
+
+  if (characterName === 'tsk') {
+    avatarComponents = <Tsk />;
+  }else if (characterName == 'wendy'){
+    avatarComponents = <Wendy/>
+  }
 
   const group = useRef<Group>(null); //  modification to: const group = useRef();
-  const { nodes, materials } = useGLTF('models/66eca76737ac02dc87aaac28.glb')
 
   const { headFollow, cursorFollow } = useControls({
     headFollow: false,
     cursorFollow: false
   })
 
-  const { animations: offensiveIdle } = useFBX("animations/OffensiveIdle.fbx")
-  const { animations: backSquat } = useFBX("animations/BackSquat.fbx")
-  const { animations: warmingUp } = useFBX("animations/WarmingUp.fbx")
-  const { animations: situps } = useFBX("animations/Situps.fbx")
+  const { animations: offensiveIdle } = useFBX("animations/"+characterName+"/OffensiveIdle.fbx")
+  const { animations: texting } = useFBX("animations/"+characterName+"/TextingWhileStanding.fbx")
+  const { animations: warmingUp } = useFBX("animations/"+characterName+"/WarmingUp.fbx")
 
   offensiveIdle[0].name = "offensiveIdle";
-  backSquat[0].name = "backSquat";
+  texting[0].name = "texting";
   warmingUp[0].name = "warmingUp";
-  situps[0].name = "situps";
 
-
-
-  const { actions } = useAnimations([offensiveIdle[0], backSquat[0], warmingUp[0], situps[0]], group);
+  const { actions } = useAnimations([offensiveIdle[0], texting[0], warmingUp[0]], group);
 
   useEffect(() => {
     if (actions[animation]) {
@@ -66,69 +76,9 @@ export default function Avatar(props: AvatarProps) {
 
   return (
     <group {...props} ref={group} dispose={null} >
-      <primitive object={nodes.Hips} />
-      <skinnedMesh
-        name="EyeLeft"
-        geometry={nodes.EyeLeft.geometry}
-        material={materials.Wolf3D_Eye}
-        skeleton={nodes.EyeLeft.skeleton}
-        morphTargetDictionary={nodes.EyeLeft.morphTargetDictionary}
-        morphTargetInfluences={nodes.EyeLeft.morphTargetInfluences}
-        frustumCulled={false}
-      />
-      <skinnedMesh
-        name="EyeRight"
-        geometry={nodes.EyeRight.geometry}
-        material={materials.Wolf3D_Eye}
-        skeleton={nodes.EyeRight.skeleton}
-        morphTargetDictionary={nodes.EyeRight.morphTargetDictionary}
-        morphTargetInfluences={nodes.EyeRight.morphTargetInfluences}
-        frustumCulled={false}
-      />
-      <skinnedMesh
-        name="Wolf3D_Head"
-        geometry={nodes.Wolf3D_Head.geometry}
-        material={materials.Wolf3D_Skin}
-        skeleton={nodes.Wolf3D_Head.skeleton}
-        morphTargetDictionary={nodes.Wolf3D_Head.morphTargetDictionary}
-        morphTargetInfluences={nodes.Wolf3D_Head.morphTargetInfluences}
-        frustumCulled={false}
-      />
-      <skinnedMesh
-        name="Wolf3D_Teeth"
-        geometry={nodes.Wolf3D_Teeth.geometry}
-        material={materials.Wolf3D_Teeth}
-        skeleton={nodes.Wolf3D_Teeth.skeleton}
-        morphTargetDictionary={nodes.Wolf3D_Teeth.morphTargetDictionary}
-        morphTargetInfluences={nodes.Wolf3D_Teeth.morphTargetInfluences}
-        frustumCulled={false}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Hair.geometry}
-        material={materials.Wolf3D_Hair}
-        skeleton={nodes.Wolf3D_Hair.skeleton}
-        frustumCulled={false}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Outfit_Bottom.geometry}
-        material={materials.Wolf3D_Outfit_Bottom}
-        skeleton={nodes.Wolf3D_Outfit_Bottom.skeleton}
-        frustumCulled={false}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Outfit_Footwear.geometry}
-        material={materials.Wolf3D_Outfit_Footwear}
-        skeleton={nodes.Wolf3D_Outfit_Footwear.skeleton}
-        frustumCulled={false}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Outfit_Top.geometry}
-        material={materials.Wolf3D_Outfit_Top}
-        skeleton={nodes.Wolf3D_Outfit_Top.skeleton}
-        frustumCulled={false}
-      />
+      {avatarComponents}
     </group>
   )
 }
 
-useGLTF.preload('models/66eca76737ac02dc87aaac28.glb')
+useGLTF.preload('models/'+characterName+'/'+characterName+'.glb')

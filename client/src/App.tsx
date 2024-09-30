@@ -4,8 +4,8 @@ import viteLogo from '/vite.svg'
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
-import Login from './components/Login';  
-import Register from './components/Register';  
+import Login from './components/Login';
+import Register from './components/Register';
 import { Canvas } from '@react-three/fiber'
 import { Expierence } from './components/Experience'
 
@@ -20,12 +20,20 @@ import { Expierence } from './components/Experience'
 
   )
 }*/
+
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/avatar" element={
+          <Canvas shadows camera={{ position: [0, 0, 6], fov: 30 }} >
+            <color attach='background' args={['#ececec']} />
+            <Expierence />
+
+          </Canvas>
+        } />
       </Routes>
     </Router>
   );
