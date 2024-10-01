@@ -14,10 +14,8 @@ app.use(bodyParser.json());
 //Configuration to Use mongoDB
 const mongoUser = process.env.DB_USER;
 const mongoPassword = process.env.DB_PASS;
-const mongoUrl = `mongodb+srv://${mongoUser}:${mongoPassword}@cluster0.6iz2suz.mongodb.net/post?retryWrites=true&w=majority`;
-//mongoUrl = `mongodb://${mongoUser}:${mongoPassword}@cluster0.mongodb.net/liftLegends`;
+const mongoUrl = `mongodb+srv://${mongoUser}:${mongoPassword}@cluster0.6iz2suz.mongodb.net/liftlegends?retryWrites=true&w=majority`;
 
-console.log(mongoUrl);
 // Connect to MongoDB
 mongoose
 	.connect(mongoUrl)
@@ -78,7 +76,28 @@ app.post("/signup", async (req, res) => {
 			.json({ message: "Username or email already registered." });
 	}
 
-	const newUser = new User({ name, username, email, password });
+	const newUser = new User({
+		name,
+		username,
+		email,
+		password,
+		currentAvatar: 0, // Initial avatar as 0
+		avatars: [0], // The avatars array starts with 0
+		weeklyPoints: new ExercisesPoints({
+			deadlift: 0,
+			benchPress: 0,
+			squat: 0,
+			shoulderPress: 0,
+			barbellRow: 0,
+			bicepCurl: 0,
+			latPulldown: 0,
+			lateralRaise: 0,
+			tricepExtension: 0,
+			legPress: 0,
+		}), // Initialize all exercise points to 0
+		experience: 0, // Starting experience is 0
+		currentLeague: 0, // Start in league 0
+	});
 	await newUser.save();
 	res.status(201).json(newUser);
 });
