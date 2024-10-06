@@ -55,7 +55,7 @@ const User = mongoose.model("User", UserSchema);
 
 const LeagueSchema = new mongoose.Schema({
 	users: { type: [UserSchema], required: true },
-	name: { type: String, required: true, unique: true },
+	rank: { type: Number, required: true, unique: true },
 	range: { type: [Number], required: true, unique: true },
 });
 const League = mongoose.model("League", LeagueSchema);
@@ -69,37 +69,77 @@ const Leagues = mongoose.model("Leagues", LeaguesSchema);
 app.post("/signup", async (req, res) => {
 	const { name, username, email, password } = req.body;
 
-	const userExists = await User.findOne({ $or: [{ username }, { email }] });
-	if (userExists) {
-		return res
-			.status(409)
-			.json({ message: "Username or email already registered." });
-	}
+	try {
+		// Check if a user with the same username or email already exists
+		const userExists = await User.findOne({
+			$or: [{ username }, { email }],
+		});
+		if (userExists) {
+			return res
+				.status(409)
+				.json({ message: "Username or email already registered." });
+		}
 
-	const newUser = new User({
-		name,
-		username,
-		email,
-		password,
-		currentAvatar: 0, // Initial avatar as 0
-		avatars: [0], // The avatars array starts with 0
-		weeklyPoints: new ExercisesPoints({
-			deadlift: 0,
-			benchPress: 0,
-			squat: 0,
-			shoulderPress: 0,
-			barbellRow: 0,
-			bicepCurl: 0,
-			latPulldown: 0,
-			lateralRaise: 0,
-			tricepExtension: 0,
-			legPress: 0,
-		}), // Initialize all exercise points to 0
-		experience: 0, // Starting experience is 0
-		currentLeague: 0, // Start in league 0
-	});
-	await newUser.save();
-	res.status(201).json(newUser);
+		// Create a new user
+		const newUser = new User({
+			name,
+			username,
+			email,
+			password,
+			currentAvatar: 0, // Initial avatar as 0
+			avatars: [0], // The avatars array starts with 0
+			weeklyPoints: new ExercisesPoints({
+				deadlift: 0,
+				benchPress: 0,
+				squat: 0,
+				shoulderPress: 0,
+				barbellRow: 0,
+				bicepCurl: 0,
+				latPulldown: 0,
+				lateralRaise: 0,
+				tricepExtension: 0,
+				legPress: 0,
+			}), // Initialize all exercise points to 0
+			experience: 0, // Starting experience is 0
+			currentLeague: 0, // Start in league 0
+		});
+
+		// Save the new user to the database
+		await newUser.save();
+
+		// Find the leagues document (assuming there's only one leagues document)
+		let leaguesDoc = await Leagues.findOne();
+
+		// If no leagues document exists, handle the error
+		if (!leaguesDoc) {
+			return res
+				.status(404)
+				.json({ message: "Leagues document not found." });
+		}
+
+		// Find the league with rank 0
+		const league = leaguesDoc.leagues.find((league) => league.rank === 0);
+
+		// If league with rank 0 doesn't exist, return an error
+		if (!league) {
+			return res
+				.status(404)
+				.json({ message: "League with rank 0 not found." });
+		}
+
+		// Push the user into the league's users array
+		// We need to push the raw JSON data instead of the mongoose model instance
+		league.users.push(newUser.toObject()); // Convert to plain JS object
+
+		// Save the updated leagues document
+		await leaguesDoc.save();
+
+		// Respond with the newly created user
+		res.status(201).json(newUser);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error.", error });
+	}
 });
 
 // Login Endpoint (Authenticate User)
@@ -113,6 +153,140 @@ app.post("/login", async (req, res) => {
 		res.status(200).json({ message: "Login successful", user });
 	} else {
 		res.status(401).json({ message: "Invalid username or password" });
+	}
+});
+
+app.post("/updatepoints", async (req, res) => {
+	const { username, exercise, points } = req.body;
+
+	try {
+		// Find the user by username
+		let user = await User.findOne({ username });
+
+		if (!user) {
+			return res.status(404).json({ message: "User not found." });
+		}
+
+		// Find the leagues document (assuming there's only one leagues document)
+		let leaguesDoc = await Leagues.findOne();
+		if (!leaguesDoc) {
+			return res
+				.status(404)
+				.json({ message: "Leagues document not found." });
+		}
+
+		// Update the user's points for the specific exercise
+		if (user.weeklyPoints[exercise] === undefined) {
+			return res.status(400).json({ message: "Invalid exercise name." });
+		}
+		user.weeklyPoints[exercise] += points;
+
+		// Update the user's experience
+		user.experience += points;
+
+		// Find the current league the user is in
+		let currentLeague = leaguesDoc.leagues.find(
+			(league) => league.rank === user.currentLeague
+		);
+
+		if (!currentLeague) {
+			return res
+				.status(404)
+				.json({ message: "User's current league not found." });
+		}
+
+		// Convert weeklyPoints to a plain object
+		const weeklyPointsPlain = user.weeklyPoints.toObject
+			? user.weeklyPoints.toObject()
+			: user.weeklyPoints;
+
+		// Calculate the total weekly points (sum of all exercises' points)
+		let totalWeeklyPoints = Object.values(weeklyPointsPlain).reduce(
+			(sum, val) => {
+				return sum + (typeof val === "number" ? val : 0);
+			},
+			0
+		);
+
+		// Access the upper limit of the current league range
+		let upperLimit = Math.max(...currentLeague.range);
+		console.log("Total Weekly Points:", totalWeeklyPoints);
+		console.log("Upper Limit:", upperLimit);
+
+		if (totalWeeklyPoints > upperLimit) {
+			// Promote the user to the next league
+			let nextLeague = leaguesDoc.leagues.find(
+				(league) => league.rank === user.currentLeague + 1
+			);
+
+			if (nextLeague) {
+				// Update the user's currentLeague value
+				user.currentLeague += 1;
+
+				// Remove the user from the current league's users array
+				currentLeague.users = currentLeague.users.filter(
+					(u) => u.username !== user.username
+				);
+
+				// Add the user to the next league's users array
+				nextLeague.users.push(user.toObject());
+
+				// Save the updated leagues document
+				await leaguesDoc.save();
+			}
+		}
+
+		// Save the updated user document
+		await user.save();
+
+		res.status(200).json({
+			message: "Points updated and promotion applied if applicable.",
+			user,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error.", error });
+	}
+});
+
+app.post("/addleague", async (req, res) => {
+	const { users, rank, range } = req.body;
+
+	try {
+		// Find the leagues document (assuming there is only one document storing all leagues)
+		let leaguesDoc = await Leagues.findOne();
+
+		// If no leagues document exists, create one
+		if (!leaguesDoc) {
+			leaguesDoc = new Leagues({ leagues: [] });
+		}
+
+		// Check if a league with the same rank already exists
+		const existingLeague = leaguesDoc.leagues.find(
+			(league) => league.rank === rank
+		);
+		if (existingLeague) {
+			return res
+				.status(409)
+				.json({ message: "League with this rank already exists." });
+		}
+
+		// Create a new league
+		const newLeague = new League({
+			users: users || [], // Default to empty array if no users provided
+			rank,
+			range,
+		});
+
+		// Add the new league to the leagues array
+		leaguesDoc.leagues.push(newLeague);
+
+		// Save the updated leagues document
+		await leaguesDoc.save();
+
+		res.status(201).json(leaguesDoc);
+	} catch (error) {
+		res.status(500).json({ message: "Server error.", error });
 	}
 });
 
