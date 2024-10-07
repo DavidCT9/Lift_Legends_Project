@@ -10,8 +10,8 @@ export const Expierence = () => {
       options: ["offensiveIdle", "texting", "warmingUp"],
     },
     character: {
-      value: "wendy",
-      options: ["tsk", "wendy"],
+      value: "tsk",
+      options: ["tsk", "wendy","jesus","aine","vespera"],
     },
   });
 
