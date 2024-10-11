@@ -297,6 +297,39 @@ app.post("/addleague", async (req, res) => {
 	}
 });
 
+app.post("/getleagueinfo", async (req, res) => {
+	const { rank } = req.body; // Extract rank from the URL parameter
+
+	try {
+		// Find the leagues document
+		let leaguesDoc = await Leagues.findOne();
+
+		if (!leaguesDoc) {
+			return res
+				.status(404)
+				.json({ message: "Leagues document not found." });
+		}
+
+		// Find the league with the specified rank
+		let league = leaguesDoc.leagues.find(
+			(league) => league.rank === parseInt(rank)
+		);
+
+		if (!league) {
+			return res.status(404).json({ message: "League not found." });
+		}
+
+		// Return the league data
+		res.status(200).json({
+			message: "League data retrieved successfully.",
+			league,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error.", error });
+	}
+});
+
 app.use(
 	cors({
 		origin: "http://localhost:5173",
