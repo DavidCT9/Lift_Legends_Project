@@ -195,6 +195,14 @@ app.post("/updatepoints", async (req, res) => {
 				.json({ message: "User's current league not found." });
 		}
 
+		// Update user data in the current league's users array
+		currentLeague.users = currentLeague.users.map((u) => {
+			if (u.username === user.username) {
+				return user.toObject(); // Convert Mongoose document to plain object
+			}
+			return u;
+		});
+
 		// Convert weeklyPoints to a plain object
 		const weeklyPointsPlain = user.weeklyPoints.toObject
 			? user.weeklyPoints.toObject()
@@ -210,8 +218,6 @@ app.post("/updatepoints", async (req, res) => {
 
 		// Access the upper limit of the current league range
 		let upperLimit = Math.max(...currentLeague.range);
-		console.log("Total Weekly Points:", totalWeeklyPoints);
-		console.log("Upper Limit:", upperLimit);
 
 		if (totalWeeklyPoints > upperLimit) {
 			// Promote the user to the next league
@@ -232,12 +238,13 @@ app.post("/updatepoints", async (req, res) => {
 				nextLeague.users.push(user.toObject());
 
 				// Save the updated leagues document
-				await leaguesDoc.save();
 			}
 		}
 
 		// Save the updated user document
 		await user.save();
+
+		await leaguesDoc.save();
 
 		res.status(200).json({
 			message: "Points updated and promotion applied if applicable.",
