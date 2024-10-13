@@ -9,10 +9,11 @@
 html,
 body {
     @apply m-0 p-0 min-h-screen w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500;
+    
 }
 
 .form-container {
-    @apply flex items-center justify-center min-h-screen;
+    @apply flex m-5 items-center justify-center min-h-screen;
 }
 
 .form-box {
