@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './General.css';
+import axios from 'axios';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -10,6 +11,17 @@ function Login() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const response = (await axios.post("http//127.0.0.1:3000/login", {
+            username: email,
+            password: password
+        })).data;
+
+        if (response.status == 200) {
+            response.user // info del usuario
+        } else {
+            throw new Error("Error")
+        }
     };
 
     return (
