@@ -11,6 +11,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
+app.use(cors());
+
 //Configuration to Use mongoDB
 const mongoUser = process.env.DB_USER;
 const mongoPassword = process.env.DB_PASS;
@@ -136,6 +138,7 @@ app.post("/signup", async (req, res) => {
 
 		// Respond with the newly created user
 		res.status(201).json(newUser);
+		console.log("Exito aqui");
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: "Server error.", error });
@@ -329,12 +332,6 @@ app.post("/getleagueinfo", async (req, res) => {
 		res.status(500).json({ message: "Server error.", error });
 	}
 });
-
-app.use(
-	cors({
-		origin: "http://localhost:5173",
-	})
-);
 
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`);
