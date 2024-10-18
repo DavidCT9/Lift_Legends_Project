@@ -301,31 +301,60 @@ app.post("/addleague", async (req, res) => {
 });
 
 app.post("/getleagueinfo", async (req, res) => {
-	const { rank } = req.body; // Extract rank from the URL parameter
-
+	const { rank } = req.body;
 	try {
-		// Find the leagues document
 		let leaguesDoc = await Leagues.findOne();
-
 		if (!leaguesDoc) {
 			return res
 				.status(404)
 				.json({ message: "Leagues document not found." });
 		}
 
-		// Find the league with the specified rank
 		let league = leaguesDoc.leagues.find(
 			(league) => league.rank === parseInt(rank)
 		);
-
 		if (!league) {
 			return res.status(404).json({ message: "League not found." });
 		}
 
-		// Return the league data
+		// Create a new array of users with the total points added
+		let usersWithTotal = league.users.map((user) => {
+			const points = user.weeklyPoints;
+			const totalPoints =
+				points.deadlift +
+				points.benchPress +
+				points.squat +
+				points.shoulderPress +
+				points.barbellRow +
+				points.bicepCurl +
+				points.latPulldown +
+				points.lateralRaise +
+				points.tricepExtension +
+				points.legPress;
+
+			return {
+				...user.toObject(), // Convert the Mongoose document to a plain object
+				weeklyPoints: {
+					...points.toObject(),
+					total: totalPoints, // Add the total points to the weeklyPoints
+				},
+			};
+		});
+
+		// Sort the new array of users by total points in descending order
+		usersWithTotal.sort(
+			(a, b) => b.weeklyPoints.total - a.weeklyPoints.total
+		);
+
+		// Create a new league object with the modified users array
+		const modifiedLeague = {
+			...league.toObject(),
+			users: usersWithTotal,
+		};
+
 		res.status(200).json({
-			message: "League data retrieved successfully.",
-			league,
+			message: "League data retrieved and modified successfully.",
+			league: modifiedLeague,
 		});
 	} catch (error) {
 		console.error(error);
