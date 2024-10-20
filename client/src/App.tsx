@@ -8,6 +8,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
 import Weights from './components/Weights';
+import Leagues from './components/Leagues';
 import { Canvas } from '@react-three/fiber'
 import { Expierence } from './components/Experience'
 
@@ -31,6 +32,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/Home" element={<Home />} />
         <Route path="/Weights" element={<Weights />} />
+        <Route path="/Leagues" element={<Leagues />} />
         <Route path="/avatar" element={
           <Canvas shadows camera={{ position: [0, 0, 6], fov: 30 }} >
             <color attach='background' args={['#ececec']} />

@@ -25,6 +25,7 @@ function Login() {
             if (response.status === 200) {
                 console.log("Login successful", response.data.user);
                 localStorage.setItem('username', response.data.user.username); // Guarda el username en localStorage
+                localStorage.setItem('currentLeague', response.data.user.currentLeague);
                 navigate('/home'); // Redirige al home después del login exitoso
             } else {
                 setError("Login fallido. Verifica tus credenciales.");

@@ -50,10 +50,10 @@ function Home() {
                     Avatar
                 </Link>
                 <Link
-                    to="/league"
+                    to="/leagues"
                     className="bg-white text-black font-bold py-2 px-6 rounded-full shadow-md hover:bg-gray-300 transition duration-300"
                 >
-                    League
+                    Leagues
                 </Link>
                 <Link
                     to="/weights"
