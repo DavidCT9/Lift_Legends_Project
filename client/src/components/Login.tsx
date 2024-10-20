@@ -23,7 +23,8 @@ function Login() {
             });
 
             if (response.status === 200) {
-                console.log("Login successful", response.data.user); // Muestra la info del usuario
+                console.log("Login successful", response.data.user);
+                localStorage.setItem('username', response.data.user.username); // Guarda el username en localStorage
                 navigate('/home'); // Redirige al home después del login exitoso
             } else {
                 setError("Login fallido. Verifica tus credenciales.");
