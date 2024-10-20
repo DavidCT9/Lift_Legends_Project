@@ -1,0 +1,157 @@
+import React, { useRef } from 'react'
+import { useGLTF } from '@react-three/drei'
+
+export function Rome(props) {
+  const { nodes, materials } = useGLTF('models/scenario/rome.glb')
+  return (
+    <group {...props} dispose={null}>
+      <group rotation={[-Math.PI / 2, 0, Math.PI]} scale={[0.2, 0.2, 0.2]} position={[-8, 1.7, 20]}  >
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_2.geometry}
+          material={materials.Material__980}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_3.geometry}
+          material={materials.Material__980fffffffffffffffffffffffffffffffffffffff}
+        />
+
+        <group scale={[3, 3, 3]} position={[0, 1500, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_4.geometry}
+            material={materials.Material__980fffffffffffgggffffffffffffffffffffffffffff}
+            frustumCulled={false}
+          />
+        </group>
+
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_5.geometry}
+          material={materials.wire_087225143}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_6.geometry}
+          material={materials.wire_154185229}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_7.geometry}
+          material={materials.Material__980fff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_8.geometry}
+          material={materials.Material__980fff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_9.geometry}
+          material={materials.Material__980fff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_10.geometry}
+          material={materials.Material__980ffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_11.geometry}
+          material={materials.Material__980ffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_12.geometry}
+          material={materials.Material__980ffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_13.geometry}
+          material={materials.Material__980fffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_14.geometry}
+          material={materials.Material__980fffffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_15.geometry}
+          material={materials.Material__980fffffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_16.geometry}
+          material={materials.Material__980fffffffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_17.geometry}
+          material={materials.Material__980ffffffffffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_18.geometry}
+          material={materials.Material__980ffffffffffffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_19.geometry}
+          material={materials.Material__980ffffffffffffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_20.geometry}
+          material={materials.Material__980ffffffffffffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_21.geometry}
+          material={materials.Material__980fffffffffffffffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_22.geometry}
+          material={materials.Material__980ffffffffffffffffffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_23.geometry}
+          material={materials.Material__980ffffffffffffffffffffffffffffffffffff}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_24.geometry}
+          material={materials.Material__982}
+        />
+      </group>
+    </group>
+  )
+}
+
+useGLTF.preload('models/scenario/rome.glb')

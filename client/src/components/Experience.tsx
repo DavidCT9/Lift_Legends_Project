@@ -1,6 +1,7 @@
 import { ContactShadows, Environment, OrbitControls, Sky } from "@react-three/drei";
 import Avatar from "./Avatar";
 import { useControls } from "leva";
+import { Rome } from "../components/scenario/Rome";
 
 export const Expierence = () => {
 
@@ -11,7 +12,7 @@ export const Expierence = () => {
     },
     character: {
       value: "tsk",
-      options: ["tsk", "wendy","jesus","aine","vespera"],
+      options: ["tsk", "wendy", "jesus", "aine", "vespera"],
     },
   });
 
@@ -26,10 +27,15 @@ export const Expierence = () => {
         {/* Force re-mount of Avatar by setting the key prop */}
         <Avatar key={character} animation={animation} characterName={character} />
 
+        {/*
         <mesh scale={30} rotation-x={-Math.PI * 0.5} position-y={-0.001}>
+          
           <planeGeometry />
           <meshBasicMaterial color="gray" />
         </mesh>
+        */}
+        <Rome />
+
       </group>
     </>
   );

@@ -13,7 +13,7 @@ function Home() {
     return (
         <div className="relative min-h-screen w-full">
             {/* Canvas que ocupa toda la pantalla */}
-            <Canvas className="absolute inset-0">
+            <Canvas className="absolute inset-0" shadows camera={{ position: [0, -0.2, 9], fov: 30 }}>
                 <color attach="background" args={['#ececec']} />
                 <Expierence />
             </Canvas>
