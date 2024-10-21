@@ -49,7 +49,7 @@ function Leagues() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white flex items-center justify-center">
             {error ? (
                 <p className="text-red-500">{error}</p>
             ) : league ? (
@@ -62,7 +62,7 @@ function Leagues() {
                         >
                             <span className="text-xl font-medium">{index + 1}. {user.username}</span>
                             <span className={`text-lg ${user.weeklyPoints.total > 0 ? 'text-green-600' : 'text-gray-500'}`}>
-                                {user.weeklyPoints.total} pts
+                                {Math.round(user.weeklyPoints.total)} pts
                             </span>
                         </div>
                     ))}

@@ -1,10 +1,60 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
 import { Expierence } from './Experience';
+import axios from 'axios';
 
 function Home() {
-    const [powerPoints] = useState(50); // Simulación de Power Points
+    const [powerPoints, setPowerPoints] = useState(0);
+    const [maxPoints, setMaxPoints] = useState(100); // Valor inicial por defecto
+    const [league, setLeague] = useState<number | null>(null);
+
+    useEffect(() => {
+        const username = localStorage.getItem('username');
+        const currentLeague = localStorage.getItem('currentLeague');
+
+        if (username && currentLeague) {
+            setLeague(parseInt(currentLeague));
+
+            // Obtenemos los detalles de la liga actual
+            const fetchLeagueDetails = async () => {
+                try {
+                    const response = await axios.post('http://localhost:3000/getleagueinfo', {
+                        rank: parseInt(currentLeague),
+                    });
+
+                    if (response.status === 200) {
+                        const leagueData = response.data.league;
+
+                        // Configuramos los puntos máximos en función de la liga actual
+                        switch (parseInt(currentLeague)) {
+                            case 0:
+                                setMaxPoints(100);
+                                break;
+                            case 1:
+                                setMaxPoints(200);
+                                break;
+                            case 2:
+                                setMaxPoints(300);
+                                break;
+                            default:
+                                setMaxPoints(100); // Valor por defecto
+                        }
+
+                        // Buscamos al usuario en la lista de usuarios de la liga para obtener sus puntos actuales
+                        const user = leagueData.users.find((u: any) => u.username === username);
+                        if (user) {
+                            setPowerPoints(user.weeklyPoints.total);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error al obtener los detalles de la liga:', error);
+                }
+            };
+
+            fetchLeagueDetails();
+        }
+    }, []);
 
     const handleLogout = () => {
         console.log('Logging out...');
@@ -12,7 +62,6 @@ function Home() {
 
     return (
         <div className="relative min-h-screen w-full">
-            {/* Canvas que ocupa toda la pantalla */}
             <Canvas className="absolute inset-0" shadows camera={{ position: [0, -0.2, 9], fov: 30 }}>
                 <color attach="background" args={['#ececec']} />
                 <Expierence />
@@ -28,7 +77,7 @@ function Home() {
                 <div className="w-40 bg-gray-700 rounded-full h-4">
                     <div
                         className="bg-green-500 h-4 rounded-full"
-                        style={{ width: `${powerPoints}%` }}
+                        style={{ width: `${(powerPoints / maxPoints) * 100}%` }}
                     ></div>
                 </div>
             </div>

@@ -50,7 +50,7 @@ function Weights() {
     };
 
     const calculatePoints = (weight: number, reps: number, difficulty: number) => {
-        return (weight * reps) / difficulty;
+        return Math.round((weight * reps) / difficulty);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -87,7 +87,7 @@ function Weights() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-8">
+        <div className="min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white p-8">
             <h1 className="text-center text-3xl font-bold mb-8">Registro de Pesos</h1>
             <form onSubmit={handleSubmit} className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {exercises.map((exercise) => (
