@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import './General.css';
 
 type User = {
     username: string;
@@ -13,6 +14,8 @@ type League = {
     rank: number;
     users: User[];
 };
+
+const leagueNames = ['Júpiter', 'Neptuno', 'Marte'];
 
 function Leagues() {
     const [league, setLeague] = useState<League | null>(null);
@@ -29,7 +32,6 @@ function Leagues() {
 
         const fetchUserLeague = async () => {
             try {
-                // Usamos la liga actual del usuario (almacenada en localStorage) para obtener la información de esa liga
                 const response = await axios.post('http://localhost:3000/getleagueinfo', {
                     rank: parseInt(currentLeague),
                 });
@@ -53,19 +55,33 @@ function Leagues() {
             {error ? (
                 <p className="text-red-500">{error}</p>
             ) : league ? (
-                <div className="w-11/12 max-w-4xl bg-white text-gray-800 rounded-lg shadow-lg p-8">
-                    <h1 className="text-3xl font-bold mb-6 text-center">Ligas</h1>
-                    {league.users.map((user, index) => (
-                        <div
-                            key={user.username}
-                            className="flex justify-between items-center py-2 px-4 border-b last:border-b-0 border-gray-300"
-                        >
-                            <span className="text-xl font-medium">{index + 1}. {user.username}</span>
-                            <span className={`text-lg ${user.weeklyPoints.total > 0 ? 'text-green-600' : 'text-gray-500'}`}>
-                                {Math.round(user.weeklyPoints.total)} pts
-                            </span>
-                        </div>
-                    ))}
+                <div className="w-11/12 max-w-4xl bg-white text-gray-800 rounded-lg shadow-lg p-8 animate-fade-in">
+                    <h1 className="text-3xl font-bold mb-6 text-center">
+                        Liga: {leagueNames[league.rank]}
+                    </h1>
+                    {league.users.map((user, index) => {
+                        const isCurrentUser =
+                            user.username === localStorage.getItem('username');
+                        return (
+                            <div
+                                key={user.username}
+                                className={`flex justify-between items-center py-2 px-4 border-b last:border-b-0 border-gray-300 ${isCurrentUser ? 'bg-yellow-200' : ''
+                                    }`}
+                            >
+                                <span className="text-xl font-medium">
+                                    {index + 1}. {user.username}
+                                </span>
+                                <span
+                                    className={`text-lg ${user.weeklyPoints.total > 0
+                                            ? 'text-green-600'
+                                            : 'text-gray-500'
+                                        }`}
+                                >
+                                    {Math.round(user.weeklyPoints.total)} pts
+                                </span>
+                            </div>
+                        );
+                    })}
                 </div>
             ) : (
                 <p>Cargando información de la liga...</p>
