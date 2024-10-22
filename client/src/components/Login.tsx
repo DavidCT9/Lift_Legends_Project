@@ -58,7 +58,7 @@ function Login() {
             <div className="form-box">
                 <h1 className="form-title">Login</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    {error && <p className="text-red-500">{error}</p>} {/* Muestra error si lo hay */}
+                    {error && <p className="text-red-500">{error}</p>}
                     <div>
                         <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                             Username

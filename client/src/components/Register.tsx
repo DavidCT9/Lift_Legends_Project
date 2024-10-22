@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './General.css'; // Importa el CSS compartido
+import './General.css'; 
 import axios, { AxiosError } from 'axios';
 
 type ServerErrorResponse = {
@@ -8,12 +8,12 @@ type ServerErrorResponse = {
 };
 
 function Register() {
-    const [username, setUsername] = useState('');  // Nuevo campo de username
+    const [username, setUsername] = useState('');  
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate(); // Para redirigir después del registro
+    const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,7 +33,7 @@ function Register() {
 
             if (response.status === 201) {
                 console.log("Registro exitoso", response.data);
-                navigate('/'); // Redirige al login después del registro exitoso
+                navigate('/'); 
             } else {
                 setError('Registro fallido. Inténtalo de nuevo.');
             }
@@ -70,7 +70,7 @@ function Register() {
             <div className="form-box">
                 <h1 className="form-title">Register</h1>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    {error && <p className="text-red-500">{error}</p>} {/* Muestra error si lo hay */}
+                    {error && <p className="text-red-500">{error}</p>} 
                     <div>
                         <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                             Username

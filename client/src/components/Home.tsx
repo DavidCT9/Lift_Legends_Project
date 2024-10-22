@@ -6,7 +6,7 @@ import axios from 'axios';
 
 function Home() {
     const [powerPoints, setPowerPoints] = useState(0);
-    const [maxPoints, setMaxPoints] = useState(100); // Valor inicial por defecto
+    const [maxPoints, setMaxPoints] = useState(100); 
     const [league, setLeague] = useState<number | null>(null);
 
     useEffect(() => {
@@ -26,7 +26,6 @@ function Home() {
                     if (response.status === 200) {
                         const leagueData = response.data.league;
 
-                        // Configuramos los puntos máximos en función de la liga actual
                         switch (parseInt(currentLeague)) {
                             case 0:
                                 setMaxPoints(100);
@@ -38,10 +37,9 @@ function Home() {
                                 setMaxPoints(300);
                                 break;
                             default:
-                                setMaxPoints(100); // Valor por defecto
+                                setMaxPoints(100); 
                         }
 
-                        // Buscamos al usuario en la lista de usuarios de la liga para obtener sus puntos actuales
                         const user = leagueData.users.find((u: any) => u.username === username);
                         if (user) {
                             setPowerPoints(user.weeklyPoints.total);

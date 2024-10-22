@@ -61,6 +61,8 @@ function Weights() {
             return;
         }
 
+        let allSuccessful = true;
+
         for (const exercise of exercises) {
             const { weight, reps } = formData[exercise.name];
             if (weight && reps) {
@@ -88,6 +90,7 @@ function Weights() {
                         }
                     }
                 } catch (error) {
+                    allSuccessful = false;
                     if (axios.isAxiosError(error)) {
                         console.error(`Error al enviar los puntos para ${exercise.name}:`, error.response?.data);
                     } else {
@@ -95,6 +98,12 @@ function Weights() {
                     }
                 }
             }
+        }
+
+        if (allSuccessful) {
+            alert('Todos los datos se han registrado correctamente.');
+        } else {
+            alert('Hubo un error en algunos registros. Por favor, verifica la consola para más detalles.');
         }
     };
 
