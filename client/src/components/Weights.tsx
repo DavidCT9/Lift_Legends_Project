@@ -68,7 +68,7 @@ function Weights() {
                 const points = calculatePoints(parseInt(weight), parseInt(reps), exercise.difficulty);
 
                 try {
-                    await axios.post('http://localhost:3000/updatepoints', {
+                    await axios.post(`http://${window.location.hostname}:3000/updatepoints`, {
                         username: username,
                         exercise: exercise.name,
                         points: points,

@@ -32,7 +32,7 @@ function Leagues() {
 
         const fetchUserLeague = async () => {
             try {
-                const response = await axios.post('http://localhost:3000/getleagueinfo', {
+                const response = await axios.post(`http://${window.location.hostname}:3000/getleagueinfo`, {
                     rank: parseInt(currentLeague),
                 });
 

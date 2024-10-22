@@ -24,7 +24,7 @@ function Register() {
         }
 
         try {
-            const response = await axios.post("http://localhost:3000/signup", {
+            const response = await axios.post(`http://${window.location.hostname}:3000/signup`, {
                 name: username,
                 username: username,
                 email: email,

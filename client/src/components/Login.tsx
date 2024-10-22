@@ -8,25 +8,25 @@ type ServerErrorResponse = {
 };
 
 function Login() {
-    const [username, setUsername] = useState('');  // Cambiado a 'username'
+    const [username, setUsername] = useState('');  
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
-
+ 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:3000/login", {
-                username: username, // Ahora se usa 'username' en lugar de 'email'
+            const response = await axios.post(`http://${window.location.hostname}:3000/login`, {
+                username: username,
                 password: password,
             });
 
             if (response.status === 200) {
                 console.log("Login successful", response.data.user);
-                localStorage.setItem('username', response.data.user.username); // Guarda el username en localStorage
+                localStorage.setItem('username', response.data.user.username);
                 localStorage.setItem('currentLeague', response.data.user.currentLeague);
-                navigate('/home'); // Redirige al home después del login exitoso
+                navigate('/home');
             } else {
                 setError("Login fallido. Verifica tus credenciales.");
             }
@@ -35,10 +35,8 @@ function Login() {
                 const serverError = error as AxiosError<ServerErrorResponse>;
 
                 if (serverError.response) {
-                    // Extrae y muestra el mensaje del servidor si existe
-                    const message = serverError.response.data?.message ||
-                        'Error inesperado.';
-                    setError(message);  // Muestra el mensaje de error al usuario
+                    const message = serverError.response.data?.message || 'Error inesperado.';
+                    setError(message);
                     console.log("Response message:", message);
                 } else if (serverError.request) {
                     console.error("No response received:", serverError.request);
@@ -53,6 +51,7 @@ function Login() {
             }
         }
     };
+
 
     return (
         <div className="form-container">
