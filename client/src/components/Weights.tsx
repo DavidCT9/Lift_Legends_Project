@@ -33,7 +33,6 @@ const exercises: Exercise[] = [
     { name: 'legPress', image: legpressImg, width: '375px', height: '150px', difficulty: 15 },
 ];
 
-
 function Weights() {
     const [formData, setFormData] = useState(
         exercises.reduce((acc, exercise) => {
@@ -68,12 +67,26 @@ function Weights() {
                 const points = calculatePoints(parseInt(weight), parseInt(reps), exercise.difficulty);
 
                 try {
-                    await axios.post(`http://${window.location.hostname}:3000/updatepoints`, {
+                    const response = await axios.post(`http://${window.location.hostname}:3000/updatepoints`, {
                         username: username,
                         exercise: exercise.name,
                         points: points,
                     });
-                    console.log(`Puntos para ${exercise.name} enviados con éxito.`);
+
+                    if (response.status === 200) {
+                        console.log(`Puntos para ${exercise.name} enviados con éxito.`);
+                        const updatedUser = response.data.user;
+
+                        // Verifica si la liga del usuario ha cambiado
+                        const currentLeague = parseInt(localStorage.getItem('currentLeague') || '0');
+                        if (updatedUser.currentLeague !== currentLeague) {
+                            // Actualiza la liga en localStorage
+                            localStorage.setItem('currentLeague', updatedUser.currentLeague.toString());
+
+                            // Recarga la página para reflejar la nueva liga
+                            window.location.reload();
+                        }
+                    }
                 } catch (error) {
                     if (axios.isAxiosError(error)) {
                         console.error(`Error al enviar los puntos para ${exercise.name}:`, error.response?.data);
@@ -81,7 +94,6 @@ function Weights() {
                         console.error(`Error al enviar los puntos para ${exercise.name}:`, error);
                     }
                 }
-
             }
         }
     };
