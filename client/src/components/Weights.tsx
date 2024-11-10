@@ -11,6 +11,8 @@ import latpulldownImg from './ImagesWeights/LatPulldown.png';
 import lateralraiseImg from './ImagesWeights/LateralRaise.png';
 import tricepextensionImg from './ImagesWeights/TricepExtension.png';
 import legpressImg from './ImagesWeights/LegPress.png';
+import ExerciseForm from './ExerciseForm'
+
 
 type Exercise = {
     name: string;
@@ -53,11 +55,18 @@ function Weights() {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+        e.preventDefault(); // Make sure this is called
         const username = localStorage.getItem('username');
 
         if (!username) {
-            console.error('No se encontró el username. Asegúrate de que el usuario esté autenticado.');
+            console.error('No user was found. Please ensure the user is authenticated.');
+            return;
+        }
+
+        // Validate that at least one exercise has data
+        const hasData = Object.values(formData).some(({ weight, reps }) => weight && reps);
+        if (!hasData) {
+            alert('At least register one exercise, please.');
             return;
         }
 
@@ -108,44 +117,30 @@ function Weights() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white p-8">
-            <h1 className="text-center text-3xl font-bold mb-8">Registro de Pesos</h1>
-            <form onSubmit={handleSubmit} className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {exercises.map((exercise) => (
-                    <div key={exercise.name} className="flex flex-col items-center space-y-2">
-                        <img
-                            src={exercise.image}
-                            alt={exercise.name}
-                            style={{ width: exercise.width, height: exercise.height }}
-                            className="object-cover rounded-md"
-                        />
-                        <h2 className="text-lg font-semibold">{exercise.name}</h2>
-                        <input
-                            type="number"
-                            placeholder="Peso (kg)"
-                            value={formData[exercise.name].weight}
-                            onChange={(e) => handleChange(exercise.name, 'weight', e.target.value)}
-                            className="w-3/4 p-2 rounded bg-gray-800 text-white focus:outline-none"
-                        />
-                        <input
-                            type="number"
-                            placeholder="Reps"
-                            value={formData[exercise.name].reps}
-                            onChange={(e) => handleChange(exercise.name, 'reps', e.target.value)}
-                            className="w-3/4 p-2 rounded bg-gray-800 text-white focus:outline-none"
-                        />
-                    </div>
-                ))}
-                <div className="col-span-full flex justify-center mt-6">
-                    <button
-                        type="submit"
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
-                    >
-                        Guardar Registro
-                    </button>
-                </div>
+        <div className="min-h-screen bg-gradient-to-r from-gray-900 via-purple-900 to-violet-900 text-white p-8">
+        <h1 className="text-center text-3xl font-bold mb-8">WEIGHTS REGISTER</h1>
+        {/* Wrap only the submit button in a form */}
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {exercises.map((exercise) => (
+                <ExerciseForm
+                    key={exercise.name}
+                    exercise={exercise}
+                    formData={formData[exercise.name]}
+                    onChange={(field, value) => handleChange(exercise.name, field, value)}
+                />
+            ))}
+        </div>
+        <div className="flex justify-center mt-6">
+            <form onSubmit={handleSubmit}>
+                <button
+                    type="submit"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+                >
+                    Save Register
+                </button>
             </form>
         </div>
+    </div>
     );
 }
 
