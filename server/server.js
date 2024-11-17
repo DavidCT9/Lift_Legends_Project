@@ -67,6 +67,10 @@ const LeaguesSchema = new mongoose.Schema({
 });
 const Leagues = mongoose.model("Leagues", LeaguesSchema);
 
+const limitSkins = 4;
+
+const costSkin = 100;
+
 // SignUp Endpoint (Create User)
 app.post("/signup", async (req, res) => {
 	const { name, username, email, password } = req.body;
@@ -359,6 +363,48 @@ app.post("/getleagueinfo", async (req, res) => {
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: "Server error.", error });
+	}
+});
+
+app.post("/buyskin", async (req, res) => {
+	const { username, idSkin } = req.body;
+
+	try {
+		// Fetch user by username
+		let user = await User.findOne({ username });
+
+		if (!user) return res.status(404).json({ message: "User not found." });
+
+		// Validate the skin ID
+		if (idSkin >= limitSkins || idSkin < 0)
+			return res.status(400).json({ message: "Invalid skin ID." });
+
+		// Check if the user has enough experience
+		if (user.experience < costSkin)
+			return res
+				.status(400)
+				.json({ message: "Insufficient experience." });
+
+		// Check if the user already owns the skin
+		if (user.avatars.includes(idSkin))
+			return res.status(400).json({ message: "Skin already owned." });
+
+		// Deduct the cost and add the skin
+		user.experience -= costSkin;
+		user.avatars.push(idSkin);
+
+		// Save the updated user
+		await user.save();
+
+		// Send success response
+		return res.status(200).json({
+			message: "Skin purchased successfully.",
+			remainingExperience: user.experience,
+			ownedSkins: user.avatars,
+		});
+	} catch (error) {
+		console.error("Error purchasing skin:", error);
+		return res.status(500).json({ message: "Internal server error." });
 	}
 });
 
