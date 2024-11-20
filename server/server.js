@@ -71,6 +71,40 @@ const limitSkins = 4;
 
 const costSkin = 100;
 
+const updateUserInfoInLeagues = async (username, updatedUser) => {
+	try {
+		// Retrieve the leagues document
+		let leaguesDoc = await Leagues.findOne();
+		if (!leaguesDoc) {
+			throw new Error("Leagues document not found.");
+		}
+
+		// Find the current league the user is in
+		let currentLeague = leaguesDoc.leagues.find(
+			(league) => league.rank === updatedUser.currentLeague
+		);
+
+		if (!currentLeague) {
+			throw new Error("User's current league not found.");
+		}
+
+		// Update user data in the current league's users array
+		currentLeague.users = currentLeague.users.map((u) => {
+			if (u.username === username) {
+				return updatedUser.toObject(); // Convert Mongoose document to plain object
+			}
+			return u;
+		});
+
+		// Save the updated leagues document
+		await leaguesDoc.save();
+	} catch (error) {
+		throw new Error(
+			`Error updating user info in leagues: ${error.message}`
+		);
+	}
+};
+
 // SignUp Endpoint (Create User)
 app.post("/signup", async (req, res) => {
 	const { name, username, email, password } = req.body;
@@ -174,14 +208,6 @@ app.post("/updatepoints", async (req, res) => {
 			return res.status(404).json({ message: "User not found." });
 		}
 
-		// Find the leagues document (assuming there's only one leagues document)
-		let leaguesDoc = await Leagues.findOne();
-		if (!leaguesDoc) {
-			return res
-				.status(404)
-				.json({ message: "Leagues document not found." });
-		}
-
 		// Update the user's points for the specific exercise
 		if (user.weeklyPoints[exercise] === undefined) {
 			return res.status(400).json({ message: "Invalid exercise name." });
@@ -191,75 +217,22 @@ app.post("/updatepoints", async (req, res) => {
 		// Update the user's experience
 		user.experience += points;
 
-		// Find the current league the user is in
-		let currentLeague = leaguesDoc.leagues.find(
-			(league) => league.rank === user.currentLeague
-		);
-
-		if (!currentLeague) {
-			return res
-				.status(404)
-				.json({ message: "User's current league not found." });
-		}
-
-		// Update user data in the current league's users array
-		currentLeague.users = currentLeague.users.map((u) => {
-			if (u.username === user.username) {
-				return user.toObject(); // Convert Mongoose document to plain object
-			}
-			return u;
-		});
-
-		// Convert weeklyPoints to a plain object
-		const weeklyPointsPlain = user.weeklyPoints.toObject
-			? user.weeklyPoints.toObject()
-			: user.weeklyPoints;
-
-		// Calculate the total weekly points (sum of all exercises' points)
-		let totalWeeklyPoints = Object.values(weeklyPointsPlain).reduce(
-			(sum, val) => {
-				return sum + (typeof val === "number" ? val : 0);
-			},
-			0
-		);
-
-		// Access the upper limit of the current league range
-		let upperLimit = Math.max(...currentLeague.range);
-
-		if (totalWeeklyPoints > upperLimit) {
-			// Promote the user to the next league
-			let nextLeague = leaguesDoc.leagues.find(
-				(league) => league.rank === user.currentLeague + 1
-			);
-
-			if (nextLeague) {
-				// Update the user's currentLeague value
-				user.currentLeague += 1;
-
-				// Remove the user from the current league's users array
-				currentLeague.users = currentLeague.users.filter(
-					(u) => u.username !== user.username
-				);
-
-				// Add the user to the next league's users array
-				nextLeague.users.push(user.toObject());
-
-				// Save the updated leagues document
-			}
-		}
+		// Update the user's info in the leagues document
+		await updateUserInfoInLeagues(username, user);
 
 		// Save the updated user document
 		await user.save();
 
-		await leaguesDoc.save();
-
 		res.status(200).json({
-			message: "Points updated and promotion applied if applicable.",
+			message: "Points updated successfully.",
 			user,
 		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: "Server error.", error });
+		res.status(500).json({
+			message: "Server error.",
+			error: error.message,
+		});
 	}
 });
 
@@ -393,6 +366,8 @@ app.post("/buyskin", async (req, res) => {
 		user.experience -= costSkin;
 		user.avatars.push(idSkin);
 
+		await updateUserInfoInLeagues(username, user);
+
 		// Save the updated user
 		await user.save();
 
@@ -406,6 +381,13 @@ app.post("/buyskin", async (req, res) => {
 		console.error("Error purchasing skin:", error);
 		return res.status(500).json({ message: "Internal server error." });
 	}
+});
+
+app.post("/weeklyReset", async (req, res) => {
+	const { password } = req.body;
+
+	if (pass != process.env.DB_USER)
+		return res.status(404).json({ message: "User not found." });
 });
 
 app.listen(PORT, () => {

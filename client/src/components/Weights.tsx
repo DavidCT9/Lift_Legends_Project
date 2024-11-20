@@ -117,7 +117,7 @@ function Weights() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-gray-900 via-purple-900 to-violet-900 text-white p-8">
+        <div className="min-h-screen text-white p-8">
         <h1 className="text-center text-3xl font-bold mb-8">WEIGHTS REGISTER</h1>
         {/* Wrap only the submit button in a form */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
