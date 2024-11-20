@@ -27,13 +27,6 @@ export const Expierence = () => {
         {/* Force re-mount of Avatar by setting the key prop */}
         <Avatar key={character} animation={animation} characterName={character} />
 
-        {/*
-        <mesh scale={30} rotation-x={-Math.PI * 0.5} position-y={-0.001}>
-          
-          <planeGeometry />
-          <meshBasicMaterial color="gray" />
-        </mesh>
-        */}
         <Rome />
 
       </group>

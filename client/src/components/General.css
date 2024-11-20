@@ -8,7 +8,7 @@
 
 html,
 body {
-    @apply m-0 p-0 min-h-screen w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500;
+    @apply m-0 p-0 min-h-screen w-full bg-gradient-to-r from-black via-blue-950 to-blue-500;
     
 }
 
