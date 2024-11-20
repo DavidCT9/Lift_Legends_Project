@@ -91,10 +91,10 @@ function Home() {
             {/* Botones de navegación ajustados */}
             <div className="absolute bottom-20 w-full flex justify-around px-6">
                 <Link
-                    to="/avatar"
+                    to="/market"
                     className="bg-white text-black font-bold py-2 px-6 rounded-full shadow-md hover:bg-gray-300 transition duration-300"
                 >
-                    Avatar
+                    Market
                 </Link>
                 <Link
                     to="/leagues"

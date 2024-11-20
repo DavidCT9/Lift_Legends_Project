@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './General.css';
 import axios, { AxiosError } from 'axios';
+import { useAuthContext } from './AuthContext';
 
 type ServerErrorResponse = {
     message: string;
@@ -12,6 +13,8 @@ function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const auth = useAuthContext(); 
  
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,6 +29,11 @@ function Login() {
                 console.log("Login successful", response.data.user);
                 localStorage.setItem('username', response.data.user.username);
                 localStorage.setItem('currentLeague', response.data.user.currentLeague);
+                
+                auth.setUser({
+                    user: response.data.user
+                })
+
                 navigate('/home');
             } else {
                 setError("Login fallido. Verifica tus credenciales.");
