@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useState, useEffect } from "react";
 
 // real user type
 type Credentials = {
@@ -19,12 +19,27 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
     const [user, setUser] = useState<Credentials>({});
 
     function deleteUser() {
+        localStorage.removeItem('user');
         setUser({});
     }
 
+    function loginUser(user: Credentials) {
+        localStorage.setItem('user', JSON.stringify(user));
+        setUser(user);
+    }
+
+    useEffect(() => {
+        // Checar si esta guardado en localStorage
+        if (localStorage.getItem('user')) {
+            setUser(JSON.parse(localStorage.getItem('user') as string) as Credentials);
+        } else {
+            // ir al login o lo que sea
+        }
+    }, []);
+
     return <AuthContext.Provider value={{
         user,
-        setUser,
+        setUser: loginUser,
         deleteUser
     }}>
         {children}

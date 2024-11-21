@@ -27,8 +27,6 @@ function Login() {
 
             if (response.status === 200) {
                 console.log("Login successful", response.data.user);
-                localStorage.setItem('username', response.data.user.username);
-                localStorage.setItem('currentLeague', response.data.user.currentLeague);
                 
                 auth.setUser({
                     user: response.data.user
