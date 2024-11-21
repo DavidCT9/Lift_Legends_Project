@@ -6,6 +6,8 @@ import JesusImg from './ImagesSkins/Jesus.png';
 import VesperaImg from './ImagesSkins/Vespera.png';
 import WendyImg from './ImagesSkins/Wendy.png';
 import { useAuthContext } from './AuthContext';
+import { Navbar } from './Navbar';
+
 
 type Skin = {
     id: number;
@@ -102,6 +104,8 @@ function Market() {
                     </div>
                 ))}
             </div>
+
+            <Navbar currentPath={'/market'}/>
         </div>
     );
 }
