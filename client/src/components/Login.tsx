@@ -70,10 +70,10 @@ function Login() {
             0 0 50px rgba(0, 0, 128, 0.5)  
         ` }}>
                 <div className="max-w-md mx-auto text-white">
-                    <div className="flex  sm:mx-auto items-center  justify-center max-w-32">
+                    <div className="flex  mx-auto items-center  justify-center max-w-32">
                         <img src='/liftLegendsLogo.svg'  alt='Logo'/>
                     </div>
-                    <div className="text-center pt-2  text-3xl font-bold">
+                    <div className="text-center pt-3  text-3xl font-bold">
                         Welcome Back!
                     </div>
 

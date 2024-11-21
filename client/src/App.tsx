@@ -24,7 +24,6 @@ function App() {
           <Route path="/Home" element={<Home />} />
           <Route path="/Weights" element={<Weights />} />
           <Route path="/Leagues" element={<Leagues />} />
-          <Route path="/Market" element={<Market />} />
           <Route path="/avatar" element={
             <Canvas shadows camera={{ position: [0, 0, 6], fov: 30 }} >
               <color attach='background' args={['#ececec']} />

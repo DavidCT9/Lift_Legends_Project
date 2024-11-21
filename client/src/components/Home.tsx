@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
 import { Expierence } from './Experience';
 import axios from 'axios';
+import {Navbar} from './Navbar';
 
 function Home() {
     const [powerPoints, setPowerPoints] = useState(0);
@@ -68,7 +69,7 @@ function Home() {
             {/* Header con avatar, barra de Power Points y logout */}
             <div className="absolute top-4 left-4 flex items-center space-x-4">
                 <img
-                    src="/path-to-avatar-icon.png"
+                    src="../liftLegendsLogo.svg"
                     alt="User Avatar"
                     className="w-12 h-12 rounded-full"
                 />
@@ -85,10 +86,10 @@ function Home() {
                 onClick={handleLogout}
                 className="absolute top-4 right-4 w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-600 flex items-center justify-center"
             >
-                <img src="/path-to-gear-icon.png" alt="Settings" className="w-6 h-6" />
+                <img src="../liftLegendsLogo2.svg" alt="Settings" className="w-12 h-12" />
             </button>
 
-            {/* Botones de navegación ajustados */}
+            {/* Botones de navegación ajustados 
             <div className="absolute bottom-20 w-full flex justify-around px-6">
                 <Link
                     to="/market"
@@ -108,7 +109,12 @@ function Home() {
                 >
                     Weights
                 </Link>
+
             </div>
+            */}
+
+            <Navbar currentPath={'/home'}/>
+
         </div>
     );
 }

@@ -12,6 +12,7 @@ import lateralraiseImg from './ImagesWeights/LateralRaise.png';
 import tricepextensionImg from './ImagesWeights/TricepExtension.png';
 import legpressImg from './ImagesWeights/LegPress.png';
 import ExerciseForm from './ExerciseForm'
+import {Navbar} from './Navbar';
 
 
 type Exercise = {
@@ -130,7 +131,7 @@ function Weights() {
                 />
             ))}
         </div>
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-center mt-6 mb-24">
             <form onSubmit={handleSubmit}>
                 <button
                     type="submit"
@@ -140,6 +141,8 @@ function Weights() {
                 </button>
             </form>
         </div>
+
+        <Navbar currentPath={'/weights'}/>
     </div>
     );
 }

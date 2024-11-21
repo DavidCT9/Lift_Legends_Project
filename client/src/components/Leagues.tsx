@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './General.css';
+import {Navbar} from './Navbar';
+
 
 type User = {
     username: string;
@@ -86,6 +88,8 @@ function Leagues() {
             ) : (
                 <p>Cargando información de la liga...</p>
             )}
+
+            <Navbar currentPath={'/leagues'}/>
         </div>
     );
 }
