@@ -386,8 +386,101 @@ app.post("/buyskin", async (req, res) => {
 app.post("/weeklyReset", async (req, res) => {
 	const { password } = req.body;
 
-	if (pass != process.env.DB_USER)
-		return res.status(404).json({ message: "User not found." });
+	if (password != process.env.SERVER_PASS)
+		return res.status(404).json({ message: "Not valid credentials." });
+
+	try {
+		const leagues = await Leagues.findOne();
+		if (!leagues) {
+			throw new Error("Leagues document not found.");
+		}
+
+		// Initialize a bidimensional array for all leagues' users
+		const allUsersByLeague = Array.from(
+			{ length: leagues.leagues.length },
+			() => []
+		);
+
+		// Process users in each league
+		for (
+			let leagueIndex = 0;
+			leagueIndex < leagues.leagues.length;
+			leagueIndex++
+		) {
+			const league = leagues.leagues[leagueIndex];
+
+			for (let user of league.users) {
+				// Calculate total points
+				const points = user.weeklyPoints;
+				const totalPoints =
+					points.deadlift +
+					points.benchPress +
+					points.squat +
+					points.shoulderPress +
+					points.barbellRow +
+					points.bicepCurl +
+					points.latPulldown +
+					points.lateralRaise +
+					points.tricepExtension +
+					points.legPress;
+
+				// Reset weekly points
+				const resetPoints = {
+					deadlift: 0,
+					benchPress: 0,
+					squat: 0,
+					shoulderPress: 0,
+					barbellRow: 0,
+					bicepCurl: 0,
+					latPulldown: 0,
+					lateralRaise: 0,
+					tricepExtension: 0,
+					legPress: 0,
+				};
+
+				// Determine new league index
+				let newLeagueIndex = leagueIndex;
+				if (
+					totalPoints >= league.range[1] &&
+					leagueIndex < leagues.leagues.length - 1
+				) {
+					console.log(`Promoting user ${user.username}`);
+					newLeagueIndex = leagueIndex + 1;
+				} else if (totalPoints < league.range[0] && leagueIndex > 0) {
+					console.log(`Demoting user ${user.username}`);
+					newLeagueIndex = leagueIndex - 1;
+				}
+
+				// Update user's league and weekly points in the database
+				const dbUser = await User.findOne({ username: user.username });
+				if (dbUser) {
+					dbUser.currentLeague = newLeagueIndex;
+					dbUser.weeklyPoints = resetPoints;
+					await dbUser.save();
+				}
+
+				// Update user object locally
+				user.weeklyPoints = resetPoints;
+
+				// Add user to the appropriate league in the bidimensional array
+				allUsersByLeague[newLeagueIndex].push(user);
+			}
+		}
+
+		// Assign the updated user lists to the leagues
+		for (let i = 0; i < leagues.leagues.length; i++) {
+			leagues.leagues[i].users = allUsersByLeague[i];
+		}
+
+		// Save updated leagues document
+		await leagues.save();
+		return res.status(200).json({
+			message: "Weekly reset successful",
+		});
+	} catch (error) {
+		console.error("Error during weekly reset:", error);
+		return res.status(500).json({ message: "Internal server error." });
+	}
 });
 
 app.listen(PORT, () => {
