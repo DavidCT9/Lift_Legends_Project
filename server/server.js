@@ -52,6 +52,7 @@ const UserSchema = new mongoose.Schema({
 	weeklyPoints: { type: ExercisesPointsSchema, required: true },
 	experience: { type: Number, required: true },
 	currentLeague: { type: Number, required: true },
+	dayPoints: { type: Number, required: true },
 });
 const User = mongoose.model("User", UserSchema);
 
@@ -68,6 +69,8 @@ const LeaguesSchema = new mongoose.Schema({
 const Leagues = mongoose.model("Leagues", LeaguesSchema);
 
 const limitSkins = 4;
+
+const limitDayPoints = 300;
 
 const costSkin = 100;
 
@@ -142,6 +145,7 @@ app.post("/signup", async (req, res) => {
 			}), // Initialize all exercise points to 0
 			experience: 0, // Starting experience is 0
 			currentLeague: 0, // Start in league 0
+			dayPoints: 0,
 		});
 
 		// Save the new user to the database
@@ -212,10 +216,18 @@ app.post("/updatepoints", async (req, res) => {
 		if (user.weeklyPoints[exercise] === undefined) {
 			return res.status(400).json({ message: "Invalid exercise name." });
 		}
+
+		if (user.dayPoints + points > limitDayPoints)
+			return res
+				.status(400)
+				.json({ message: "Limit Daily Points surpassed" });
+
 		user.weeklyPoints[exercise] += points;
 
 		// Update the user's experience
 		user.experience += points;
+
+		user.dayPoints += points;
 
 		// Update the user's info in the leagues document
 		await updateUserInfoInLeagues(username, user);
@@ -479,6 +491,43 @@ app.post("/weeklyReset", async (req, res) => {
 		});
 	} catch (error) {
 		console.error("Error during weekly reset:", error);
+		return res.status(500).json({ message: "Internal server error." });
+	}
+});
+
+app.post("/dailyReset", async (req, res) => {
+	const { password } = req.body;
+
+	// Validate the provided password
+	if (password != process.env.SERVER_PASS) {
+		return res.status(404).json({ message: "Not valid credentials." });
+	}
+
+	try {
+		// Reset `dayPoints` for all users in the `User` collection
+		await User.updateMany({}, { $set: { dayPoints: 0 } });
+
+		// Retrieve and update the `Leagues` document
+		const leagues = await Leagues.findOne();
+		if (!leagues) {
+			throw new Error("Leagues document not found.");
+		}
+
+		// Iterate through each league and reset `dayPoints` for its users
+		for (let league of leagues.leagues) {
+			for (let user of league.users) {
+				user.dayPoints = 0; // Reset the dayPoints field
+			}
+		}
+
+		// Save the updated leagues document
+		await leagues.save();
+
+		return res.status(200).json({
+			message: "Daily reset successful",
+		});
+	} catch (error) {
+		console.error("Error during daily reset:", error);
 		return res.status(500).json({ message: "Internal server error." });
 	}
 });
