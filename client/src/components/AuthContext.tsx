@@ -1,49 +1,62 @@
 import { createContext, ReactNode, useContext, useState, useEffect } from "react";
 
-// real user type
-type Credentials = {
-    user?: any
-}; 
+type User = {
+    id: string;
+    username: string;
+    // Otros campos necesarios
+};
 
-type AuthContextType = Credentials & {
-    setUser: (user: Credentials) => void,
-    deleteUser: () => void,
+type Credentials = {
+    user: User | null;
+};
+
+type AuthContextType = {
+    user: User | null;
+    setUser: (user: Credentials) => void;
+    deleteUser: () => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
+    user: null,
     setUser: () => { },
-    deleteUser: () => { }   
+    deleteUser: () => { }
 });
 
 export default function AuthContextProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<Credentials>({});
+    const [user, setUser] = useState<User | null>(null);
 
     function deleteUser() {
         localStorage.removeItem('user');
-        setUser({});
+        setUser(null);
     }
 
-    function loginUser(user: Credentials) {
-        localStorage.setItem('user', JSON.stringify(user));
-        setUser(user);
+    function loginUser(credentials: Credentials) {
+        deleteUser(); // Limpia cualquier usuario previo
+        localStorage.setItem('user', JSON.stringify(credentials.user));
+        setUser(credentials.user);
     }
 
     useEffect(() => {
-        // Checar si esta guardado en localStorage
-        if (localStorage.getItem('user')) {
-            setUser(JSON.parse(localStorage.getItem('user') as string) as Credentials);
-        } else {
-            // ir al login o lo que sea
+        try {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                setUser(JSON.parse(storedUser) as User);
+            }
+        } catch (error) {
+            console.error("Error parsing user from localStorage:", error);
+            deleteUser();
         }
     }, []);
 
-    return <AuthContext.Provider value={{
-        user,
-        setUser: loginUser,
-        deleteUser
-    }}>
-        {children}
-    </AuthContext.Provider>
+    return (
+        <AuthContext.Provider value={{
+            user,
+            setUser: loginUser,
+            deleteUser
+        }}>
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
 export function useAuthContext() {

@@ -14,24 +14,30 @@ function Login() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const auth = useAuthContext(); 
+    const auth = useAuthContext();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
             const response = await axios.post(`http://${window.location.hostname}:3000/login`, {
-                username: username,
-                password: password,
+                username,
+                password,
             });
 
             if (response.status === 200) {
                 console.log("Login successful", response.data.user);
-                
-                auth.setUser({
-                    user: response.data.user
-                })
 
+                // Guarda los datos en el contexto de autenticación
+                auth.setUser({
+                    user: response.data.user,
+                });
+
+                // Guarda `username` y `currentLeague` en localStorage
+                localStorage.setItem('username', response.data.user.username);
+                localStorage.setItem('currentLeague', response.data.user.currentLeague.toString());
+
+                // Redirige a la página de inicio
                 navigate('/home');
             } else {
                 setError("Login fallido. Verifica tus credenciales.");
@@ -57,8 +63,6 @@ function Login() {
             }
         }
     };
-
-
     return (
 
         <div className="relative py-6 sm:max-w-xl sm:mx-auto w-full">

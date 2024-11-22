@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './General.css';
-import {Navbar} from './Navbar';
-
+import { Navbar } from './Navbar';
 
 type User = {
     username: string;
@@ -27,15 +26,24 @@ function Leagues() {
         const username = localStorage.getItem('username');
         const currentLeague = localStorage.getItem('currentLeague');
 
+        console.log('Username:', username); // Para depuración
+        console.log('CurrentLeague:', currentLeague); // Para depuración
+
+        console.log(localStorage);
+
+        // Validar si `username` y `currentLeague` están presentes
         if (!username || !currentLeague) {
             setError('No se encontró la información del usuario en localStorage.');
+            setTimeout(() => {
+                window.location.href = '/'; // Redirige al login si faltan datos
+            }, 3000);
             return;
         }
 
         const fetchUserLeague = async () => {
             try {
                 const response = await axios.post(`http://${window.location.hostname}:3000/getleagueinfo`, {
-                    rank: parseInt(currentLeague),
+                    rank: parseInt(currentLeague, 10), // Convertir `currentLeague` a número
                 });
 
                 if (response.status === 200) {
@@ -75,8 +83,8 @@ function Leagues() {
                                 </span>
                                 <span
                                     className={`text-lg ${user.weeklyPoints.total > 0
-                                            ? 'text-green-600'
-                                            : 'text-gray-500'
+                                        ? 'text-green-600'
+                                        : 'text-gray-500'
                                         }`}
                                 >
                                     {Math.round(user.weeklyPoints.total)} pts
@@ -89,7 +97,7 @@ function Leagues() {
                 <p>Cargando información de la liga...</p>
             )}
 
-            <Navbar currentPath={'/leagues'}/>
+            <Navbar currentPath={'/leagues'} />
         </div>
     );
 }
