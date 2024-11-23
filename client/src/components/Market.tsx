@@ -8,7 +8,6 @@ import WendyImg from './ImagesSkins/Wendy.png';
 import { useAuthContext } from './AuthContext';
 import { Navbar } from './Navbar';
 
-
 type Skin = {
     id: number;
     name: string;
@@ -26,11 +25,29 @@ function Market() {
     const [experience, setExperience] = useState<number>(0);
     const [ownedSkins, setOwnedSkins] = useState<number[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const { user } = useAuthContext();
+    const { user } = useAuthContext(); // Accedemos al usuario desde el contexto
 
-    console.log("In store with user: ", user);
+    useEffect(() => {
+        const updateFromStorage = () => {
+            const storedExperience = localStorage.getItem('experience');
+            const storedSkins = localStorage.getItem('ownedSkins');
 
-    // Función para manejar la compra de una skin
+            setExperience(storedExperience ? parseInt(storedExperience, 10) : 0);
+            setOwnedSkins(storedSkins ? JSON.parse(storedSkins) : []);
+        };
+
+        // Cargar datos inicialmente
+        updateFromStorage();
+
+        // Escuchar cambios en localStorage
+        window.addEventListener('storage', updateFromStorage);
+
+        return () => {
+            window.removeEventListener('storage', updateFromStorage);
+        };
+    }, []);
+
+
     const handleBuySkin = async (skinId: number) => {
         const username = localStorage.getItem('username');
         if (!username) {
@@ -48,6 +65,10 @@ function Market() {
                 setExperience(response.data.remainingExperience);
                 setOwnedSkins(response.data.ownedSkins);
                 setError(null);
+
+                // Actualiza localStorage con los nuevos valores
+                localStorage.setItem('experience', response.data.remainingExperience.toString());
+                localStorage.setItem('ownedSkins', JSON.stringify(response.data.ownedSkins));
             } else {
                 setError('No se pudo completar la compra.');
             }
@@ -105,7 +126,7 @@ function Market() {
                 ))}
             </div>
 
-            <Navbar currentPath={'/market'}/>
+            <Navbar currentPath={'/market'} />
         </div>
     );
 }

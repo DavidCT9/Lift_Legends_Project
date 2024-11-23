@@ -88,6 +88,7 @@ function Weights() {
                     if (response.status === 200) {
                         console.log(`Puntos para ${exercise.name} enviados con éxito.`);
                         const updatedUser = response.data.user;
+                        localStorage.setItem('experience', updatedUser.experience.toString());
 
                         // Verifica si la liga del usuario ha cambiado
                         const currentLeague = parseInt(localStorage.getItem('currentLeague') || '0');

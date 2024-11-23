@@ -36,6 +36,7 @@ function Login() {
                 // Guarda `username` y `currentLeague` en localStorage
                 localStorage.setItem('username', response.data.user.username);
                 localStorage.setItem('currentLeague', response.data.user.currentLeague.toString());
+                localStorage.setItem('experience', response.data.user.experience.toString()); // Agrega la experiencia
 
                 // Redirige a la página de inicio
                 navigate('/home');
