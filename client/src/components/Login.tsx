@@ -26,6 +26,7 @@ function Login() {
             });
 
             if (response.status === 200) {
+                const { user } = response.data;
                 console.log("Login successful", response.data.user);
 
                 // Guarda los datos en el contexto de autenticación
@@ -37,6 +38,7 @@ function Login() {
                 localStorage.setItem('username', response.data.user.username);
                 localStorage.setItem('currentLeague', response.data.user.currentLeague.toString());
                 localStorage.setItem('experience', response.data.user.experience.toString()); // Agrega la experiencia
+                localStorage.setItem('ownedSkins', JSON.stringify(user.avatars || [])); // Asegura que las skins estén sincronizadas    
 
                 // Redirige a la página de inicio
                 navigate('/home');

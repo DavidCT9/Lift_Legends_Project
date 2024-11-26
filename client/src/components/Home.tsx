@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
-import { Expierence } from './Experience';
+import { Experience } from './Experience';
 import axios from 'axios';
 import {Navbar} from './Navbar';
 
@@ -63,7 +63,7 @@ function Home() {
         <div className="relative min-h-screen w-full">
             <Canvas className="absolute inset-0" shadows camera={{ position: [0, -0.2, 9], fov: 30 }}>
                 <color attach="background" args={['#ececec']} />
-                <Expierence />
+                <Experience />
             </Canvas>
 
             {/* Header con avatar, barra de Power Points y logout */}
@@ -73,7 +73,7 @@ function Home() {
                     alt="User Avatar"
                     className="w-12 h-12 rounded-full"
                 />
-                <div className="w-40 bg-gray-700 rounded-full h-4">
+                <div className="w-40 bg-gray-700 rounded-full h-4 overflow-hidden">
                     <div
                         className="bg-green-500 h-4 rounded-full"
                         style={{ width: `${(powerPoints / maxPoints) * 100}%` }}

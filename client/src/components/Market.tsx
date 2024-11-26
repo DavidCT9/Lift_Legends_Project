@@ -15,10 +15,10 @@ type Skin = {
 };
 
 const skins: Skin[] = [
-    { id: 0, name: 'Aine', image: AineImg },
-    { id: 1, name: 'Jesus', image: JesusImg },
-    { id: 2, name: 'Vespera', image: VesperaImg },
-    { id: 3, name: 'Wendy', image: WendyImg },
+    { id: 1, name: 'Aine', image: AineImg },
+    { id: 2, name: 'Jesus', image: JesusImg },
+    { id: 3, name: 'Vespera', image: VesperaImg },
+    { id: 4, name: 'Wendy', image: WendyImg },
 ];
 
 function Market() {
@@ -31,6 +31,7 @@ function Market() {
         const updateFromStorage = () => {
             const storedExperience = localStorage.getItem('experience');
             const storedSkins = localStorage.getItem('ownedSkins');
+            console.log(localStorage.getItem('ownedSkins'));
 
             setExperience(storedExperience ? parseInt(storedExperience, 10) : 0);
             setOwnedSkins(storedSkins ? JSON.parse(storedSkins) : []);
@@ -96,7 +97,7 @@ function Market() {
                 <p>Experiencia disponible: {experience} XP</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid mb-20 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {skins.map((skin) => (
                     <div
                         key={skin.id}

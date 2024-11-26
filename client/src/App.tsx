@@ -10,7 +10,7 @@ import Home from './components/Home';
 import Weights from './components/Weights';
 import Leagues from './components/Leagues';
 import { Canvas } from '@react-three/fiber'
-import { Expierence } from './components/Experience'
+import { Experience } from './components/Experience'
 import Market from './components/Market';
 import AuthContextProvider from './components/AuthContext';
 
@@ -28,7 +28,7 @@ function App() {
           <Route path="/avatar" element={
             <Canvas shadows camera={{ position: [0, 0, 6], fov: 30 }} >
               <color attach='background' args={['#ececec']} />
-              <Expierence />
+              <Experience />
 
             </Canvas>
           } />

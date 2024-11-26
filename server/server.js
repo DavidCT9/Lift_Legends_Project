@@ -68,7 +68,7 @@ const LeaguesSchema = new mongoose.Schema({
 });
 const Leagues = mongoose.model("Leagues", LeaguesSchema);
 
-const limitSkins = 4;
+const limitSkins = 5;
 
 const limitDayPoints = 300;
 
